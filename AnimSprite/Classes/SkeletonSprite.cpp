@@ -77,8 +77,8 @@ SkeletonSprite::~SkeletonSprite( void ){
   animateTimeLines.clear();
 }
 //--------------------------------------------------------------------------------------------------
-void SkeletonSprite::processSpriteSkeleton( CCNode * parentNode, tinyxml2::XMLElement * node ){
-  tinyxml2::XMLElement * spriteEle = node->FirstChildElement( "Sprite" );
+void SkeletonSprite::initSpriteSkeleton( CCNode * parentNode, tinyxml2::XMLElement * node ){
+  tinyxml2::XMLElement * spriteEle = node->FirstChildElement( "SpriteNode" );
   while( spriteEle ){
     int depth = spriteEle->IntAttribute( "depth" );
     unsigned int index =spriteEle->UnsignedAttribute( "index" );
@@ -93,8 +93,8 @@ void SkeletonSprite::processSpriteSkeleton( CCNode * parentNode, tinyxml2::XMLEl
     sprite->setAnchorPoint( anchor );
     this->sprites.insert( std::make_pair( index, sprite ));
     parentNode->addChild( sprite, depth );
-    processSpriteSkeleton( sprite, spriteEle );
-    spriteEle = spriteEle->NextSiblingElement( "Sprite" );
+    initSpriteSkeleton( sprite, spriteEle );
+    spriteEle = spriteEle->NextSiblingElement( "SpriteNode" );
   }
 }
 //--------------------------------------------------------------------------------------------------
@@ -143,15 +143,15 @@ void processSpritePart( SpritePart * spritePart, tinyxml2::XMLElement * sprPartE
   }
 }
 //--------------------------------------------------------------------------------------------------
-void SkeletonSprite::processAnimationTimeline(tinyxml2::XMLElement * node){
-  tinyxml2::XMLElement * timelineEle = node->FirstChildElement( "Timeline" );
-  while( timelineEle ){
+void SkeletonSprite::initAnimations(tinyxml2::XMLElement * node){
+  tinyxml2::XMLElement * clipEle = node->FirstChildElement( "Clip" );
+  while( clipEle ){
     Timeline * timeline = new Timeline();
-    timeline->name = timelineEle->Attribute( "name" );
+    timeline->name = clipEle->Attribute( "name" );
     timeline->isLoop = false;
-    timelineEle->QueryBoolAttribute( "isLoop", &( timeline->isLoop ) );
+    clipEle->QueryBoolAttribute( "isLoop", &( timeline->isLoop ) );
     
-    tinyxml2::XMLElement * keyframeEle = timelineEle->FirstChildElement( "Keyframe" );
+    tinyxml2::XMLElement * keyframeEle = clipEle->FirstChildElement( "Keyframe" );
     while ( keyframeEle ) {
       Keyframe * keyframe = new Keyframe();
       keyframe->time = keyframeEle->FloatAttribute( "time" );
@@ -168,7 +168,29 @@ void SkeletonSprite::processAnimationTimeline(tinyxml2::XMLElement * node){
       keyframeEle = keyframeEle->NextSiblingElement( "Keyframe" );
     }
     this->animateTimeLines.insert( std::make_pair( timeline->name, timeline ) );
-    timelineEle = timelineEle->NextSiblingElement( "Timeline" );
+    clipEle = clipEle->NextSiblingElement( "Timeline" );
+  }
+}
+//--------------------------------------------------------------------------------------------------
+void SkeletonSprite::initSpriteLibrary( tinyxml2::XMLElement * spriteLibraryEle ){
+  CCSpriteFrameCache * spriteFrameCache = CCSpriteFrameCache::sharedSpriteFrameCache();
+  tinyxml2::XMLElement * atlasEle = spriteLibraryEle->FirstChildElement( "Atlas" );
+  while( atlasEle ){
+    const char * atlasFileName = atlasEle->Attribute( "src" );
+    if( atlasFileName )
+      spriteFrameCache->addSpriteFramesWithFile( atlasFileName );
+
+    tinyxml2::XMLElement * spriteFrameEle = atlasEle->FirstChildElement( "SpriteFrame" );
+    while( spriteFrameEle ){
+      const char * spriteFrameName = spriteFrameEle->Attribute( "src" );
+      if( spriteFrameName ){
+        CCSpriteFrame * spriteFrame = spriteFrameCache->spriteFrameByName( spriteFrameName );
+        spriteFrame->retain();
+        this->spriteFrames.push_back( spriteFrame );
+      }
+      spriteFrameEle = spriteFrameEle->NextSiblingElement( "SpriteFrame" );
+    }
+    atlasEle = atlasEle->NextSiblingElement( "Atlas" );
   }
 }
 //--------------------------------------------------------------------------------------------------
@@ -184,22 +206,19 @@ bool SkeletonSprite::init( const char * anmsprFileName ){
     CC_BREAK_IF( error );
     tinyxml2::XMLElement * rootEle = doc.FirstChildElement("AnimateSprite");
     CC_BREAK_IF( !rootEle );
-    tinyxml2::XMLElement * spriteFrameCacheEle = rootEle->FirstChildElement("SpriteFrameCache");
-    CC_BREAK_IF( !spriteFrameCacheEle );
-    const char * cachePlist = spriteFrameCacheEle->Attribute( "src" );
-    CC_BREAK_IF( !cachePlist );
-    CCSpriteFrameCache * spriteFrameCache = CCSpriteFrameCache::sharedSpriteFrameCache();
-    spriteFrameCache->addSpriteFramesWithFile( cachePlist );
-    tinyxml2::XMLElement * spriteFrameEle = spriteFrameCacheEle->FirstChildElement( "SpriteFrame" );
-    while( spriteFrameEle ){
-      const char * spriteFrameName = spriteFrameEle->Attribute( "src" );
-      CCSpriteFrame * spriteFrame = spriteFrameCache->spriteFrameByName( spriteFrameName );
-      spriteFrame->retain();
-      this->spriteFrames.push_back( spriteFrame );
-      spriteFrameEle = spriteFrameEle->NextSiblingElement( "SpriteFrame" );
-    }
-    processSpriteSkeleton( this, rootEle );
-    processAnimationTimeline( rootEle );
+
+    tinyxml2::XMLElement * spriteLibraryEle = rootEle->FirstChildElement("SpriteLibrary");
+    CC_BREAK_IF( !spriteLibraryEle );
+    this->initSpriteLibrary( spriteLibraryEle );
+    
+    tinyxml2::XMLElement * skeletonEle = rootEle->FirstChildElement("Skeleton");
+    CC_BREAK_IF( !skeletonEle );
+    this->initSpriteSkeleton( this, skeletonEle );
+    
+    tinyxml2::XMLElement * animationsEle = rootEle->FirstChildElement("Animations");
+    CC_BREAK_IF( !animationsEle );
+    this->initAnimations( animationsEle );
+    
     ret = true;
   }while( 0 );
   return ret;

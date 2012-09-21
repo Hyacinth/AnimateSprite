@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		25038C811601743300005C54 /* img.plist in Resources */ = {isa = PBXBuildFile; fileRef = 25038C7F1601743300005C54 /* img.plist */; };
 		25038C821601743300005C54 /* img.png in Resources */ = {isa = PBXBuildFile; fileRef = 25038C801601743300005C54 /* img.png */; };
+		2523BF1F160C2DBD00021C41 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2523BF1E160C2DBD00021C41 /* Default-568h@2x.png */; };
 		25476DB715FE139100B4D2F7 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 25476DB615FE139100B4D2F7 /* QuartzCore.framework */; };
 		25476DB915FE139100B4D2F7 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 25476DB815FE139100B4D2F7 /* OpenGLES.framework */; };
 		25476DBB15FE139100B4D2F7 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 25476DBA15FE139100B4D2F7 /* OpenAL.framework */; };
@@ -202,6 +203,7 @@
 /* Begin PBXFileReference section */
 		25038C7F1601743300005C54 /* img.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = img.plist; path = Resources/img.plist; sourceTree = "<group>"; };
 		25038C801601743300005C54 /* img.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = img.png; path = Resources/img.png; sourceTree = "<group>"; };
+		2523BF1E160C2DBD00021C41 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		25476DB215FE139100B4D2F7 /* AnimSprite.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AnimSprite.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		25476DB615FE139100B4D2F7 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		25476DB815FE139100B4D2F7 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -628,6 +630,7 @@
 		25476DA715FE139100B4D2F7 = {
 			isa = PBXGroup;
 			children = (
+				2523BF1E160C2DBD00021C41 /* Default-568h@2x.png */,
 				25476DC615FE139100B4D2F7 /* AnimSprite */,
 				25476DB515FE139100B4D2F7 /* Frameworks */,
 				25476DB315FE139100B4D2F7 /* Products */,
@@ -1492,6 +1495,7 @@
 				2547703015FE13F600B4D2F7 /* demo.anmspr in Resources */,
 				25038C811601743300005C54 /* img.plist in Resources */,
 				25038C821601743300005C54 /* img.png in Resources */,
+				2523BF1F160C2DBD00021C41 /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1697,7 +1701,7 @@
 					"\"$(PROJECT_NAME)/libs/CocosDenshion/include\"",
 					"\"$(SDKROOT)/usr/include/libxml2\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -1721,7 +1725,7 @@
 					"\"$(PROJECT_NAME)/libs/CocosDenshion/include\"",
 					"\"$(SDKROOT)/usr/include/libxml2\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				SDKROOT = iphoneos;
 			};

@@ -28,8 +28,10 @@ private:
   
   bool init( const char * anmsprFileName );
   
-  void processSpriteSkeleton( cocos2d::CCNode * parentNode, tinyxml2::XMLElement * node );
-  void processAnimationTimeline( tinyxml2::XMLElement * node );
+  void initSpriteLibrary( tinyxml2::XMLElement * spriteLibraryEle );
+  void initSpriteSkeleton( cocos2d::CCNode * parentNode, tinyxml2::XMLElement * node );
+  void initAnimations( tinyxml2::XMLElement * node );
+  
   void changeSpriteFrame( cocos2d::CCObject * obj );
   void performNext( void );
   void resetSprite( SpritePart * spritePart );
